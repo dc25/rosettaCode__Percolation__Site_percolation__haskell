@@ -34,9 +34,9 @@ percolate f =
  
 -- Generate a random field.
 initField :: Int -> Int -> Double -> Rand StdGen Field
-initField width height threshold = do
+initField w h threshold = do
     frnd <- fmap (\rv -> if rv<threshold then ' ' else  '#') <$> getRandoms
-    return $ listArray ((0,0), (width-1, height-1)) frnd 
+    return $ listArray ((0,0), (w-1, h-1)) frnd 
  
 -- Get a list of "leaks" from the bottom of a field.
 leaks :: Field -> [Bool]
@@ -46,13 +46,13 @@ leaks f =
 
 -- Run test once; Return bool indicating success or failure.
 oneTest :: Int -> Int -> Double -> Rand StdGen Bool
-oneTest width height threshold = 
-    or.leaks.percolate <$> initField width height threshold
+oneTest w h threshold = 
+    or.leaks.percolate <$> initField w h threshold
  
 -- Run test multple times; Return the number of tests that pass.
 multiTest :: Int -> Int -> Int -> Double -> Rand StdGen Double
-multiTest testCount width height threshold = do
-    results <- replicateM testCount $ oneTest width height threshold
+multiTest testCount w h threshold = do
+    results <- replicateM testCount $ oneTest w h threshold
     let leakyCount = length $ filter id results
     return $ fromIntegral leakyCount / fromIntegral testCount
 
@@ -65,10 +65,10 @@ showField a =  do
 main :: IO ()
 main = do
   g <- getStdGen
-  let width = 15
-      height = 15
+  let w = 15
+      h = 15
       threshold = 0.6
-      (startField, g2) = runRand (initField width height threshold) g
+      (startField, g2) = runRand (initField w h threshold) g
 
   putStrLn ("Unpercolated field with " ++ show threshold ++ " threshold.")
   putStrLn ""
@@ -81,10 +81,14 @@ main = do
 
   let testCount = 10000
       densityCount = 10
+      
   putStrLn ""
-  putStrLn ("Results of running percolation test " ++ show testCount ++ " times with thresholds ranging from 0/" ++ show densityCount ++ " to " ++ show densityCount ++ "/" ++ show densityCount ++ " .")
+  putStrLn (   "Results of running percolation test " ++ show testCount 
+            ++ " times with thresholds ranging from 0/" ++ show densityCount 
+            ++ " to " ++ show densityCount ++ "/" ++ show densityCount ++ " .")
+
   let densities = [0..densityCount]
-  let tests = sequence [multiTest testCount width height v 
+  let tests = sequence [multiTest testCount w h v 
                            | density <- densities,
                              let v = fromIntegral density / fromIntegral densityCount ]
   let results = zip densities (evalRand tests g2)
