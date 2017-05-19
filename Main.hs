@@ -27,9 +27,9 @@ percolateR seep f =
  
 -- Percolate a field.  Return the percolated field.
 percolate :: Field -> Field
-percolate f = 
-    let ((_,_),(xHi,_)) = bounds f
-        (final, _) = percolateR [(x,0) | x <- [0..xHi]] f
+percolate start = 
+    let ((_,_),(xHi,_)) = bounds start
+        (final, _) = percolateR [(x,0) | x <- [0..xHi]] start
     in final
  
 -- Generate a random field.
@@ -88,9 +88,9 @@ main = do
             ++ " to " ++ show densityCount ++ "/" ++ show densityCount ++ " .")
 
   let densities = [0..densityCount]
-  let tests = sequence [multiTest testCount w h v 
+      tests = sequence [multiTest testCount w h v 
                            | density <- densities,
                              let v = fromIntegral density / fromIntegral densityCount ]
-  let results = zip densities (evalRand tests g2)
+      results = zip densities (evalRand tests g2)
   mapM_ print [format ("p=" % int % "/" % int % " -> " % fixed 4) density densityCount x | (density,x) <- results]
  
