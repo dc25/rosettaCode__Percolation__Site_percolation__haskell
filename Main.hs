@@ -25,7 +25,7 @@ percolateR seep f =
             (concatMap neighbors validSeep)
             (f // map (\p -> (p,'.')) validSeep)
  
--- Percolate a field;  Return the percolated field.
+-- Percolate a field.  Return the percolated field.
 percolate :: Field -> Field
 percolate f = 
     let ((_,_),(xHi,_)) = bounds f
@@ -38,7 +38,7 @@ initField width height threshold = do
     frnd <- fmap (\rv -> if rv<threshold then ' ' else  '#') <$> getRandoms
     return $ listArray ((0,0), (width-1, height-1)) frnd 
  
--- Assess whether or not percolation reached bottom of field.
+-- Get a list of "leaks" from the bottom of a field.
 leaks :: Field -> [Bool]
 leaks f = 
     let ((xLo,_),(xHi,yHi)) = bounds f
@@ -60,8 +60,7 @@ multiTest testCount width height threshold = do
 showField :: Field -> IO ()
 showField a =  do
     let ((xLo,yLo),(xHi,yHi)) = bounds a
-        fLines =  [ [ a!(x,y) | x <- [xLo..xHi]] | y <- [yLo..yHi]]
-    mapM_ print fLines
+    mapM_ print [ [ a!(x,y) | x <- [xLo..xHi]] | y <- [yLo..yHi]]
 
 main :: IO ()
 main = do
