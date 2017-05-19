@@ -79,7 +79,7 @@ main = do
   putStrLn ""
   showField $ percolate startField
 
-  let testCount = 20000
+  let testCount = 10000
       densityCount = 10
   putStrLn ""
   putStrLn ("Results of running percolation test " ++ show testCount ++ " times with thresholds ranging from 0/" ++ show densityCount ++ " to " ++ show densityCount ++ "/" ++ show densityCount ++ " .")
